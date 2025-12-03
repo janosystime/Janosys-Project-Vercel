@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Relatório Demográfico — Prefeitura Municipal de São José dos Campos. Visualize dados populacionais, faixas etárias e cobertura de creches com gráficos interativos e informações atualizadas."
+    />
+
+    <!-- Open Graph -->
+    <meta
+      property="og:title"
+      content="Prefeitura de São José dos Campos — Relatório Demográfico"
+    />
+    <meta
+      property="og:description"
+      content="Portal de dados demográficos da Prefeitura de São José dos Campos. Explore gráficos e estatísticas sobre população, regiões e serviços municipais."
+    />
+    <meta
+      property="og:image"
+      content="/Janosys-Project/static/images/brasao.png"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <title>Prefeitura de São José dos Campos — Relatório Demográfico</title>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="/Janosys-Project/static/images/brasao.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/Janosys-Project/static/images/brasao.png"
+    />
+
+    <link
+      rel="stylesheet"
+      href="/Janosys-Project/static/css/style.css"
+    />
+    <link
+      rel="preload"
+      href="/Janosys-Project/static/css/style.css"
+      as="style"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"
+    />
+  </head>
+
+  <body id="topo">
+    <div class="page-wrapper">
+      <!-- HEADER -->
+      <header class="header-pmsjc">
+        <img
+          src="/Janosys-Project/static/images/brasao.png"
+          alt="Brasão de São José dos Campos"
+          width="80"
+        />
+        <div class="header-text text-center">
+          <h1>
+            <i class="fas fa-city icon-animated pulse"></i> Prefeitura de São
+            José dos Campos
+          </h1>
+          <p style="text-align: center">
+            <i class="fas fa-handshake icon-animated float"></i> Compromisso com
+            a cidade e seus cidadãos
+          </p>
+        </div>
+        <img
+          src="/Janosys-Project/static/images/bandeira.jpg"
+          alt="Bandeira de São José dos Campos"
+          width="80"
+          id="bandeira"
+        />
+      </header>
+
+      <!-- MAIN -->
+      <main class="container my-4 flex-grow-1">
+        <div class="graphic-container mb-4" id="graphic-container">
+          <div class="dropdown">
+            <button><i class="fas fa-chart-pie"></i> Gráficos</button>
+            <div class="content">
+              <a onclick="chamaGraphDensPop()">
+                <i class="fas fa-users"></i> Densidade Populacional
+              </a>
+              <a onclick="chamaGraphEtariaRegiao()">
+                <i class="fas fa-chart-line"></i> Faixa Etária e Região
+              </a>
+              <a onclick="chamaGraphCreche()">
+                <i class="fas fa-child"></i> Crianças e Creches
+              </a>
+              <a onclick="chamaGraphIdoso()">
+                <i class="fas fa-user"></i> Idosos e UBS
+              </a>
+              <a onclick="chamaGraphRenda()">
+                <i class="fas fa-money-bill" aria-hidden="true"></i> Renda Média
+              </a>
+              <a onclick="chamaGraphPerfilCentro()">
+                <i class="fas fa-landmark" aria-hidden="true"></i> Perfil - Zona
+                Central
+              </a>
+              <a onclick="chamaGraphPerfilNorte()">
+                <i class="fas fa-tree" aria-hidden="true"></i> Perfil - Zona
+                Norte
+              </a>
+              <a onclick="chamaGraphPerfilSul()">
+                <i class="fas fa-people-group" aria-hidden="true"></i> Perfil -
+                Zona Sul
+              </a>
+
+              <a onclick="chamaGraphPerfilSudeste()">
+                <i class="fas fa-industry" aria-hidden="true"></i> Perfil - Zona
+                Sudeste
+              </a>
+
+              <a onclick="chamaGraphPerfilLeste()">
+                <i class="fas fa-microchip" aria-hidden="true"></i> Perfil -
+                Zona Leste
+              </a>
+              <a onclick="chamaGraphPerfilOeste()">
+                <i
+                  class="fas fa-magnifying-glass-dollar"
+                  aria-hidden="true"
+                ></i>
+                Perfil - Zona Oeste
+              </a>
+            </div>
+          </div>
+
+          <div class="container-div-helper-img">
+            <p>
+              <a class="btn-sobre" href="/Janosys-Project/templates/sobre.html">
+                <i class="fas fa-users"></i> Sobre Nós
+              </a>
+            </p>
+          </div>
+
+          <iframe
+            src="/Janosys-Project/static/iframes/grafico_regioes.html"
+            frameborder="0"
+            width="100%"
+            height="682"
+            title="Gráfico de Regiões"
+            id="grafico-iframe"
+            class="d-block mx-auto"
+          ></iframe>
+        </div>
+
+        <!-- CARDS -->
+        <div class="stats-cards mb-4">
+          <div class="card-stat text-center icon-animated">
+            <i class="fas fa-users fa-2x mb-2 pulse"></i>
+            <h4 id="card-total">0</h4>
+            <p id="label-card1">População Total</p>
+          </div>
+          <div class="card-stat text-center icon-animated">
+            <i class="fas fa-chart-bar fa-2x mb-2 pulse"></i>
+            <h4 id="card-criancas">0</h4>
+            <p id="label-card2">Maior População</p>
+          </div>
+          <div class="card-stat text-center icon-animated">
+            <i class="fas fa-chart-area fa-2x mb-2 pulse"></i>
+            <h4 id="card-idosos">0</h4>
+            <p id="label-card3">Menor População</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- BOTÃO VOLTAR AO TOPO -->
+      <button
+        class="btn-voltar-topo"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' });"
+        title="Voltar ao topo"
+      ></button>
+
+      <footer class="footer-pmsjc text-center">
+        <i class="fas fa-landmark icon-animated float"></i>
+        <span class="fw-bold">PMSJC</span>
+
+        <span class="divider">|</span>
+
+        <i class="fas fa-code icon-animated pulse"></i>
+        <a
+          href="https://github.com/janosystime"
+          target="_blank"
+          class="fw-bold footer-link"
+        >
+          JanoSys Technologies
+        </a>
+      </footer>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+      const iframe = document.getElementById("grafico-iframe");
+      const card1 = document.getElementById("card-total");
+      const labelCard1 = document.getElementById("label-card1");
+      const card2 = document.getElementById("card-criancas");
+      const labelCard2 = document.getElementById("label-card2");
+      const card3 = document.getElementById("card-idosos");
+      const labelCard3 = document.getElementById("label-card3");
+
+      function chamaGraphDensPop() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/grafico_regioes.html";
+        labelCard1.textContent = "População Total";
+        labelCard2.textContent = "Maior População";
+        labelCard3.textContent = "Menor População";
+        card1.textContent = "0";
+        card2.textContent = "0";
+        card3.textContent = "0";
+      }
+
+      function chamaGraphEtariaRegiao() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/grafico_etaria_regiao.html";
+        labelCard1.textContent = "Adultos (20-59)";
+        labelCard2.textContent = "Região + Crianças";
+        labelCard3.textContent = "Região + Idosos";
+        card1.textContent = "0";
+        card2.textContent = "0";
+        card3.textContent = "0";
+      }
+
+      function chamaGraphCreche() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/grafico_criancas_creches.html";
+        labelCard1.textContent = "Escolas Infantis Públicas";
+        labelCard2.textContent = "Escolas Infantis Privadas";
+        labelCard3.textContent = "Maior Cobertura da Rede Infantil";
+        card1.textContent = "65";
+        card2.textContent = "159";
+        card3.textContent = "Centro";
+      }
+
+      function chamaGraphIdoso() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/grafico_idoso_ubs.html";
+        labelCard1.textContent = "Maior Cobertura da Rede de Atendimento";
+        labelCard2.textContent = "Menor Cobertura da Rede de Atendimento";
+        labelCard3.textContent = "Maior População Idosa";
+        card1.textContent = "Leste";
+        card2.textContent = "Oeste";
+        card3.textContent = "Sul";
+      }
+
+      function chamaGraphRenda() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/grafico_renda.html";
+        labelCard1.textContent = "Maior Renda Média";
+        labelCard2.textContent = "Menor Renda Média";
+        labelCard3.textContent = "Renda Média da cidade em 2022";
+        card1.textContent = "Aquarius: R$ 14.194,47";
+        card2.textContent = "Banhado Centro: R$ 1.128,37";
+        card3.textContent = "R$ 4.028,00";
+      }
+
+      function chamaGraphPerfilCentro() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/perfil_zona_centro.html";
+        labelCard1.textContent = "Polo Histórico e Cultural";
+        labelCard2.textContent = "Abriga a Prefeitura e o Paço";
+        labelCard3.textContent = "Parque Vicentina Aranha";
+        card1.textContent = "";
+        card2.textContent = "";
+        card3.textContent = "";
+      }
+
+      function chamaGraphPerfilNorte() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/perfil_zona_norte.html";
+        labelCard1.textContent = "Maior Área Rural de SJC";
+        labelCard2.textContent = "Acesso à Estrada dos Bandeirantes";
+        labelCard3.textContent = "Bairros com Chácaras e Sítios";
+        card1.textContent = "";
+        card2.textContent = "";
+        card3.textContent = "";
+      }
+
+      function chamaGraphPerfilSul() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/perfil_zona_sul.html";
+        labelCard1.textContent = "Maior Concentração Populacional";
+        labelCard2.textContent = "Principal Área Industrial e Fabril";
+        labelCard3.textContent = "Abriga o Parque Industrial";
+        card1.textContent = "";
+        card2.textContent = "";
+        card3.textContent = "";
+      }
+
+      function chamaGraphPerfilSudeste() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/perfil_zona_sudeste.html";
+        labelCard1.textContent = "Fácil Acesso à Rodovia";
+        labelCard2.textContent = "Comércio e Serviços em Expansão";
+        labelCard3.textContent = "Área com Potencial de Valorização";
+        card1.textContent = "";
+        card2.textContent = "";
+        card3.textContent = "";
+      }
+
+      function chamaGraphPerfilLeste() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/perfil_zona_leste.html";
+        labelCard1.textContent = "Foco em Tecnologia e Inovação";
+        labelCard2.textContent = "Próxima ao Aeroporto SJC (SJK)";
+        labelCard3.textContent = "Abriga o Parque Tecnológico";
+        card1.textContent = "";
+        card2.textContent = "";
+        card3.textContent = "";
+      }
+
+      function chamaGraphPerfilOeste() {
+        iframe.src =
+          "/Janosys-Project/static/iframes/perfil_zona_oeste.html";
+        labelCard1.textContent = "Melhor Índice de Qualidade de Vida";
+        labelCard2.textContent = "Concentra Condomínios de Alto Padrão";
+        labelCard3.textContent = "Região do Urbanova e Colinas";
+        card1.textContent = "";
+        card2.textContent = "";
+        card3.textContent = "";
+      }
+
+      function atualizarCards(data) {
+        const label1 = labelCard1.textContent;
+
+        if (label1 === "Adultos (20-59)") {
+          card1.textContent =
+            data.faixasEtarias && data.faixasEtarias.adultos !== undefined
+              ? data.faixasEtarias.adultos.toLocaleString("pt-BR")
+              : "0";
+          card2.textContent =
+            data.faixasEtarias && data.faixasEtarias.regiaoMaisCriancas
+              ? data.faixasEtarias.regiaoMaisCriancas
+              : "N/A";
+          card3.textContent =
+            data.faixasEtarias && data.faixasEtarias.regiaoMaisIdosos
+              ? data.faixasEtarias.regiaoMaisIdosos
+              : "N/A";
+        } else if (label1 === "Crianças em Creche") {
+          card1.textContent =
+            data.creche && data.creche.total !== undefined
+              ? data.creche.total.toLocaleString("pt-BR")
+              : "0";
+          card2.textContent =
+            data.creche && data.creche.cobertura !== undefined
+              ? `${data.creche.cobertura}%`
+              : "0%";
+          card3.textContent =
+            data.creche && data.creche.vagas !== undefined
+              ? data.creche.vagas.toLocaleString("pt-BR")
+              : "0";
+        } else {
+          card1.textContent =
+            data.total !== undefined ? data.total.toLocaleString("pt-BR") : "0";
+          if (data.regioes && data.regioes.length > 0) {
+            const sortedRegioes = [...data.regioes].sort(
+              (a, b) => b.valor - a.valor
+            );
+            card2.textContent = `${
+              sortedRegioes[0].nome
+            }: ${sortedRegioes[0].valor.toLocaleString("pt-BR")}`;
+            card3.textContent = `${
+              sortedRegioes[sortedRegioes.length - 1].nome
+            }: ${sortedRegioes[sortedRegioes.length - 1].valor.toLocaleString(
+              "pt-BR"
+            )}`;
+          } else {
+            card2.textContent = "N/A";
+            card3.textContent = "N/A";
+          }
+        }
+      }
+
+      window.addEventListener("message", (event) => {
+        const data = event.data;
+        if (!data || data.type !== "updateDemographics") return;
+        atualizarCards(data);
+      });
+    </script>
+
+    <script src="/Janosys-Project/static/js/script.js"></script>
+  </body>
+</html>

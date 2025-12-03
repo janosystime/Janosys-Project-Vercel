@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.plot.ly/plotly-3.2.0.min.js"></script>
+
+    <title>Gráfico — Faixa Etária por Região / Censo 2022</title>
+    <meta
+      name="description"
+      content="Visualização interativa da população por faixa etária e região com base no Censo 2022 (IBGE)."
+    />
+
+    <style>
+      :root {
+        --cor-crianca: #e74c3c;
+        --cor-jovem: #3498db;
+        --cor-adulto: #2ecc71;
+        --cor-idoso: #f39c12;
+      }
+
+      html,
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #222;
+      }
+      .wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 20px;
+      }
+      .wrap h2 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #333;
+        margin: 0 0 8px 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .wrap p.source {
+        font-size: 0.85rem;
+        color: #666;
+        margin: 0;
+      }
+      #plot {
+        width: 100%;
+        height: 70vh;
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .age-scroll-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+      .age-filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: nowrap;
+        margin-top: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 6px 2px;
+      }
+      .age-filters::-webkit-scrollbar {
+        display: none;
+      }
+      .region-scroll-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      /* Setas inicialmente escondidas */
+      .arrow-btn {
+        display: none;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(90deg, #004d9d, #0066cc);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        z-index: 5;
+        font-size: 0.8rem;
+        text-align: center;
+        padding-bottom: 0.5em;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .arrow-btn:hover {
+        transform: translateY(-50%) scale(1.1);
+        filter: brightness(1.15);
+      }
+
+      button {
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 8px 18px;
+        color: white;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease;
+        opacity: 1;
+        filter: none;
+      }
+
+      /* Adiciona brilho ao passar o mouse */
+      button:hover {
+        transform: translateY(2px); /* só sobe 2px ao invés de 5px */
+        filter: brightness(1.08) !important; /* brilho mais suave */
+        border-radius: 100%;
+      }
+
+      /* Box de filtros sem borda por padrão */
+      .region-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: nowrap;
+        margin: 10px 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 5px 10px;
+      }
+
+      /* Scrollbars escondidas */
+      .region-filters::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Botões dentro da região */
+      .region-filters button {
+        border-radius: 12px; /* arredondamento padrão */
+        padding: 8px 18px; /* padding fixo */
+        overflow: hidden; /* evita que o box-shadow/vibração ultrapasse o botão */
+        transition: all 0.3s ease;
+      }
+
+      /* Hover dos botões */
+      .region-filters button:hover {
+        transform: translateY(-2px); /* leve elevação */
+        filter: brightness(1.08); /* brilho sutil */
+        border-radius: 16px; /* aumenta o radius no hover */
+        padding: 8px 18px; /* padding fixo, não cresce */
+      }
+
+      /* Hover colorido por grupo */
+      .region-filters button[data-group="Criança"]:hover {
+        box-shadow: 0 0 12px 3px rgba(231, 76, 60, 0.6);
+      }
+      .region-filters button[data-group="Jovem"]:hover {
+        box-shadow: 0 0 12px 3px rgba(52, 152, 219, 0.6);
+      }
+      .region-filters button[data-group="Adulto"]:hover {
+        box-shadow: 0 0 12px 3px rgba(46, 204, 113, 0.6);
+      }
+      .region-filters button[data-group="Idoso"]:hover {
+        box-shadow: 0 0 12px 3px rgba(243, 156, 18, 0.6);
+      }
+
+      button.ativo {
+        transform: scale(0.96);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      button:not(.ativo) {
+        opacity: 0.55;
+        filter: grayscale(0.2);
+      }
+
+      button.flash-radial {
+        position: relative;
+        overflow: hidden;
+      }
+
+      button.flash-radial::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        animation: radialPulse 0.6s ease-out forwards;
+      }
+
+      button i {
+        font-size: 0.95rem;
+        vertical-align: middle;
+      }
+
+      @keyframes radialPulse {
+        0% {
+          width: 0;
+          height: 0;
+          opacity: 0.6;
+        }
+        50% {
+          width: 150%;
+          height: 150%;
+          opacity: 0.4;
+        }
+        100% {
+          width: 200%;
+          height: 200%;
+          opacity: 0;
+        }
+      }
+
+      @keyframes gradMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .region-filters {
+          gap: 6px;
+          margin: 0 50px;
+          border: 2px solid #004d9d;
+          border-radius: 10px;
+          box-shadow: 0 2px 6px rgba(0, 77, 157, 0.1);
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .region-filters button {
+          padding: 6px 12px;
+          font-size: 0.85rem;
+        }
+
+        .arrow-btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+        }
+
+        .arrow-btn.left {
+          left: -4px; /* fora da box */
+        }
+        .arrow-btn.right {
+          right: -4px; /* fora da box */
+        }
+        #plot {
+          height: 50vh;
+        }
+        .wrap {
+          padding: 10px;
+        }
+        .wrap h2 {
+          font-size: 1.1rem;
+        }
+        .wrap p.source {
+          font-size: 0.75rem;
+        }
+      }
+
+      /* Botões de ano (2010 / 2022) */
+      .year-switcher {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        align-self: flex-end;
+      }
+      /* Botões de ano (2010/2022) agora com animação + gradiente */
+      .year-switcher button {
+        font-size: 0.9rem;
+        padding: 8px 18px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        color: white;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 255, 255, 0.35),
+          rgba(255, 255, 255, 0) 70%
+        );
+
+        transition: all 0.35s ease, background 0.5s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .year-switcher button::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        border-radius: inherit;
+        background: conic-gradient(
+          var(--cor-crianca),
+          var(--cor-jovem),
+          var(--cor-adulto),
+          var(--cor-idoso),
+          var(--cor-crianca)
+        );
+        z-index: -1;
+      }
+
+      .year-switcher button:active::after {
+        animation: radialPulse 0.6s ease-out forwards;
+      }
+
+      /* --- SOMBRA COLORIDA DE ACORDO COM AS FAIXAS ATIVAS (dinâmico) --- */
+      .year-switcher button.shadow-crianca {
+        box-shadow: 0 0 20px rgba(231, 76, 60, 0.55) !important;
+      }
+      .year-switcher button.shadow-jovem {
+        box-shadow: 0 0 20px rgba(52, 152, 219, 0.55) !important;
+      }
+      .year-switcher button.shadow-adulto {
+        box-shadow: 0 0 20px rgba(46, 204, 113, 0.55) !important;
+      }
+      .year-switcher button.shadow-idoso {
+        box-shadow: 0 0 20px rgba(243, 156, 18, 0.55) !important;
+      }
+
+      /* Para quando 2+ faixas estiverem ativas */
+      .year-switcher button.shadow-multi {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.4) !important;
+      }
+
+      /* Quando só algumas cores devem aparecer no gradiente */
+      .year-switcher button.grad-crianca {
+        background: linear-gradient(90deg, var(--cor-crianca));
+      }
+
+      .year-switcher button.grad-jovem {
+        background: linear-gradient(90deg, var(--cor-jovem));
+      }
+
+      .year-switcher button.grad-adulto {
+        background: linear-gradient(90deg, var(--cor-adulto));
+      }
+
+      .year-switcher button.grad-idoso {
+        background: linear-gradient(90deg, var(--cor-idoso));
+      }
+
+      /* combinações */
+      .year-switcher button.grad-cj {
+        background: linear-gradient(
+          90deg,
+          var(--cor-crianca),
+          var(--cor-jovem)
+        );
+      }
+
+      .year-switcher button.grad-cja {
+        background: linear-gradient(
+          90deg,
+          var(--cor-crianca),
+          var(--cor-jovem),
+          var(--cor-adulto)
+        );
+      }
+
+      /* Hover animado */
+      .year-switcher button:hover {
+        filter: brightness(1.18);
+        transform: translateY(-2px) scale(1.03);
+        border-radius: 14px;
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
+        transition: all 0.25s ease-out;
+      }
+
+      /* Flash radial igual aos filtros */
+      .year-switcher button.flash-radial::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.4),
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+
+        animation: flashPulse 0.6s ease-out forwards;
+      }
+
+      @keyframes flashPulse {
+        0% {
+          opacity: 1;
+          transform: scale(0.8);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.6);
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="wrap">
+      <h2>População por Faixa Etária — Censo 2022</h2>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        "
+      >
+        <p class="source">Fonte: IBGE / Consolidação Municipal (Censo 2022).</p>
+        <!-- Botões de troca de ano (2010 / 2022) -->
+        <div class="year-switcher">
+          <button id="btn-2010">2010</button>
+          <button id="btn-2022" class="ativo">2022</button>
+        </div>
+      </div>
+
+      <div class="region-scroll-container">
+        <!-- setas fora da box -->
+        <button class="arrow-btn left" id="scroll-left">&#9664;</button>
+
+        <div class="region-filters" id="age-filters">
+          <!-- botões de filtros serão inseridos aqui via JS -->
+        </div>
+
+        <button class="arrow-btn right" id="scroll-right">&#9654;</button>
+      </div>
+
+      <div id="plot"></div>
+    </div>
+
+    <script>
+      (async function () {
+        const regions = ["Centro", "Leste", "Norte", "Oeste", "Sudeste", "Sul"];
+        const ageGroups = ["Criança", "Jovem", "Adulto", "Idoso"];
+
+        const ageColors = {
+          Criança: "#e74c3c",
+          Jovem: "#3498db",
+          Adulto: "#2ecc71",
+          Idoso: "#f39c12",
+        };
+
+        function setButtonColor(btn, group, isActive) {
+          btn.dataset.group = group;
+          btn.style.transition = "all 0.3s ease";
+
+          if (isActive) {
+            btn.classList.add("ativo");
+            btn.style.opacity = "1";
+            btn.style.transform = "scale(0.97)";
+            btn.style.filter = "none";
+            // Gradiente colorido para ativo
+            switch (group) {
+              case "Criança":
+                btn.style.background =
+                  "linear-gradient(90deg, #e74c3c, #c0392b)";
+                break;
+              case "Jovem":
+                btn.style.background =
+                  "linear-gradient(90deg, #3498db, #2980b9)";
+                break;
+              case "Adulto":
+                btn.style.background =
+                  "linear-gradient(90deg, #2ecc71, #27ae60)";
+                break;
+              case "Idoso":
+                btn.style.background =
+                  "linear-gradient(90deg, #f39c12, #d35400)";
+                break;
+            }
+          } else {
+            btn.classList.remove("ativo");
+            btn.style.opacity = "0.6";
+            btn.style.transform = "scale(1)";
+            btn.style.filter = "grayscale(0.3)";
+            btn.style.background = "#aaa"; // cinza
+          }
+        }
+
+        const regionMap = {
+          Centro: ["03", "03A", "04", "20", "26"],
+          Leste: ["05", "05A", "06", "06A", "07", "08", "27", "30", "31", "33"],
+          Norte: ["01", "01A", "02", "02A", "25", "25A", "32"],
+          Oeste: ["17", "17A", "18", "19"],
+          Sudeste: ["09", "10", "29"],
+          Sul: ["11", "12", "13", "14", "15", "16", "28", "21"],
+        };
+
+        async function carregarCSV(url) {
+          try {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error("CSV não encontrado");
+            const text = await resp.text();
+            const lines = text.split("\n").filter((l) => l.trim() !== "");
+
+            const data = {};
+            regions.forEach(
+              (r) => (data[r] = { Criança: 0, Jovem: 0, Adulto: 0, Idoso: 0 })
+            );
+
+            lines.slice(1).forEach((line) => {
+              const cols = line.split(";");
+              const setor = cols[4].match(/\d+/)?.[0] ?? "";
+              const idade = {
+                "0 a 4": Number(cols[7]?.replace(/\./g, "")) || 0,
+                "5 a 9": Number(cols[10]?.replace(/\./g, "")) || 0,
+                "10 a 14": Number(cols[11]?.replace(/\./g, "")) || 0,
+                "15 a 19": Number(cols[12]?.replace(/\./g, "")) || 0,
+                "20 a 24": Number(cols[15]?.replace(/\./g, "")) || 0,
+                "25 a 29": Number(cols[16]?.replace(/\./g, "")) || 0,
+                "30 a 39": Number(cols[17]?.replace(/\./g, "")) || 0,
+                "40 a 49": Number(cols[18]?.replace(/\./g, "")) || 0,
+                "50 a 59": Number(cols[19]?.replace(/\./g, "")) || 0,
+                "60 a 64": Number(cols[20]?.replace(/\./g, "")) || 0,
+                "65 a 69": Number(cols[21]?.replace(/\./g, "")) || 0,
+                "70+": Number(cols[22]?.replace(/\./g, "")) || 0,
+              };
+
+              for (const r of regions) {
+                if (regionMap[r].includes(setor)) {
+                  data[r]["Criança"] += idade["0 a 4"];
+                  data[r]["Jovem"] +=
+                    idade["5 a 9"] + idade["10 a 14"] + idade["15 a 19"];
+                  data[r]["Adulto"] +=
+                    idade["20 a 24"] +
+                    idade["25 a 29"] +
+                    idade["30 a 39"] +
+                    idade["40 a 49"] +
+                    idade["50 a 59"] +
+                    idade["60 a 64"];
+                  data[r]["Idoso"] += idade["65 a 69"] + idade["70+"];
+                }
+              }
+            });
+            return data;
+          } catch (e) {
+            console.warn("Falha ao carregar CSV, usando mock");
+            const mock = {};
+            regions.forEach(
+              (r) =>
+                (mock[r] = {
+                  Criança: 5000,
+                  Jovem: 12000,
+                  Adulto: 30000,
+                  Idoso: 8000,
+                })
+            );
+            return mock;
+          }
+        }
+
+        function atualizarGradienteAno() {
+          const botoesAno = [
+            document.getElementById("btn-2010"),
+            document.getElementById("btn-2022"),
+          ];
+
+          if (selectedAges.length === 0) {
+            botoesAno.forEach((btn) => {
+              btn.style.background = "#777";
+              btn.style.animation = "none";
+              btn.style.filter = "none";
+            });
+            return;
+          }
+
+          // LIMPAR ESTILOS ANTIGOS
+          botoesAno.forEach((btn) => {
+            btn.style.background = "none";
+            btn.style.backgroundImage = "none";
+            btn.style.filter = "none";
+            btn.style.animation = "none";
+            btn.style.backgroundSize = "auto";
+          });
+
+          const mapa = { Criança: "c", Jovem: "j", Adulto: "a", Idoso: "i" };
+          const cores = {
+            c: "#e74c3c",
+            j: "#3498db",
+            a: "#2ecc71",
+            i: "#f39c12",
+          };
+
+          const selecionadas = selectedAges.map((a) => mapa[a]);
+
+          let gradient = "";
+
+          if (selecionadas.length === 1) {
+            const key = selecionadas[0];
+            const cor = cores[key];
+
+            gradient = `linear-gradient(
+      90deg,
+      ${cor} 0%,
+      ${cor}CC 50%,
+      ${cor} 100%
+    )`;
+          } else {
+            gradient = `linear-gradient(90deg, ${selecionadas
+              .map((key) => cores[key])
+              .join(", ")})`;
+          }
+
+          botoesAno.forEach((btn) => {
+            btn.style.transition = "background 0.6s ease, filter 0.3s ease";
+            btn.style.background = gradient;
+            btn.style.filter = "brightness(1.05)";
+          });
+
+          botoesAno.forEach((btn) => {
+            btn.style.backgroundSize = "200% 200%";
+            btn.style.animation = "gradMove 6s ease infinite";
+          });
+        }
+
+        function atualizarSombraAno() {
+          const btn2010 = document.getElementById("btn-2010");
+          const btn2022 = document.getElementById("btn-2022");
+
+          // remover classes antigas
+          const allClasses = [
+            "shadow-crianca",
+            "shadow-jovem",
+            "shadow-adulto",
+            "shadow-idoso",
+            "shadow-multi",
+          ];
+
+          [btn2010, btn2022].forEach((btn) => {
+            allClasses.forEach((c) => btn.classList.remove(c));
+          });
+
+          // aplicar nova
+          if (selectedAges.length === 1) {
+            const faixa = selectedAges[0].toLowerCase();
+            btn2010.classList.add(`shadow-${faixa}`);
+            btn2022.classList.add(`shadow-${faixa}`);
+          } else {
+            btn2010.classList.add("shadow-multi");
+            btn2022.classList.add("shadow-multi");
+          }
+        }
+
+        const regionData = await carregarCSV("dados_sjc.csv");
+
+        const regionDataTotal = {
+          Criança: regions.reduce(
+            (sum, r) => sum + regionData[r]["Criança"],
+            0
+          ),
+          Jovem: regions.reduce((sum, r) => sum + regionData[r]["Jovem"], 0),
+          Adulto: regions.reduce((sum, r) => sum + regionData[r]["Adulto"], 0),
+          Idoso: regions.reduce((sum, r) => sum + regionData[r]["Idoso"], 0),
+        };
+
+        let selectedAges = ["Criança", "Jovem", "Adulto", "Idoso"];
+
+        const ageFiltersContainer = document.getElementById("age-filters");
+
+        function makeTraces(filteredAges) {
+          const isMobile = window.innerWidth <= 640;
+          return ageGroups.map((age) => ({
+            x: regions,
+            y: regions.map(
+              (r) => (filteredAges.includes(age) ? regionData[r][age] : 0) // mantém a barra no lugar
+            ),
+            type: "bar",
+            name: age,
+            marker: {
+              color: ageColors[age],
+              line: { width: 1, color: ageColors[age] },
+            },
+            text: regions.map(
+              (r) =>
+                filteredAges.includes(age)
+                  ? regionData[r][age].toLocaleString()
+                  : "" // texto some
+            ),
+            textposition: isMobile ? "inside" : "outside",
+            textfont: {
+              size: isMobile ? 12 : 14,
+              color: isMobile ? "#fff" : "#333",
+              family: "Segoe UI, sans-serif",
+            },
+            insidetextanchor: "middle",
+            hovertemplate: "%{x} - " + age + ": %{text}<extra></extra>",
+            showlegend: false,
+          }));
+        }
+
+        const layout = {
+          barmode: window.innerWidth <= 640 ? "stack" : "stack",
+          margin: {
+            t: window.innerWidth <= 640 ? 40 : 60,
+            r: 16,
+            l: 50,
+            b: 40,
+          },
+          xaxis: {
+            tickangle: 0,
+            automargin: true,
+            showgrid: false,
+            zeroline: false,
+            showline: false,
+          },
+          yaxis: {
+            tickformat: ",d",
+            showgrid: false,
+            zeroline: false,
+            showline: false,
+          },
+          hovermode: "closest",
+          font: {
+            family: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+            color: "#222",
+          },
+          paper_bgcolor: "rgba(0,0,0,0)",
+          plot_bgcolor: "rgba(0,0,0,0)",
+          transition: { duration: 600, easing: "cubic-in-out" },
+          showlegend: false,
+        };
+
+        const config = {
+          responsive: true,
+          displayModeBar: false,
+          displaylogo: false,
+        };
+
+        function sendDemographicsData() {
+          let regiaoMaisCriancas = "",
+            regiaoMaisIdosos = "";
+          let maxCriancas = 0,
+            maxIdosos = 0;
+
+          regions.forEach((regiao) => {
+            if (
+              selectedAges.includes("Criança") &&
+              regionData[regiao]["Criança"] > maxCriancas
+            ) {
+              maxCriancas = regionData[regiao]["Criança"];
+              regiaoMaisCriancas = `${regiao}: ${maxCriancas.toLocaleString(
+                "pt-BR"
+              )}`;
+            }
+            if (
+              selectedAges.includes("Idoso") &&
+              regionData[regiao]["Idoso"] > maxIdosos
+            ) {
+              maxIdosos = regionData[regiao]["Idoso"];
+              regiaoMaisIdosos = `${regiao}: ${maxIdosos.toLocaleString(
+                "pt-BR"
+              )}`;
+            }
+          });
+
+          window.parent.postMessage(
+            {
+              type: "updateDemographics",
+              faixasEtarias: {
+                adultos: selectedAges.includes("Adulto")
+                  ? regionDataTotal["Adulto"]
+                  : 0,
+                regiaoMaisCriancas: selectedAges.includes("Criança")
+                  ? regiaoMaisCriancas
+                  : "N/A",
+                regiaoMaisIdosos: selectedAges.includes("Idoso")
+                  ? regiaoMaisIdosos
+                  : "N/A",
+              },
+            },
+            "*"
+          );
+        }
+
+        function updatePlot() {
+          layout.barmode = "stack";
+          layout.margin.t = window.innerWidth <= 640 ? 40 : 60;
+          Plotly.react("plot", makeTraces(selectedAges), layout, config);
+          sendDemographicsData(); // Enviar dados atualizados ao mudar filtros
+        }
+
+        const filterContainer = document.getElementById("age-filters");
+
+        const ageIcons = {
+          Criança: "fa-solid fa-baby",
+          Jovem: "fa-solid fa-user-graduate",
+          Adulto: "fa-solid fa-briefcase",
+          Idoso: "fa-solid fa-person-cane",
+        };
+
+        ageGroups.forEach((group) => {
+          const btn = document.createElement("button");
+          btn.textContent = group;
+          btn.dataset.group = group;
+          btn.title = `Exibir faixa: ${group}`;
+
+          // Adiciona ícone + texto
+          btn.innerHTML = `<i class="${ageIcons[group]}" style="margin-right:8px"></i>${group}`;
+
+          setButtonColor(btn, group, true);
+
+          btn.addEventListener("click", () => {
+            const index = selectedAges.indexOf(group);
+
+            if (index === -1) {
+              // ativar
+              selectedAges.push(group);
+              setButtonColor(btn, group, true);
+            } else {
+              // desativar
+              selectedAges.splice(index, 1);
+              setButtonColor(btn, group, false);
+            }
+
+            // Efeito radial
+            btn.classList.add("flash-radial");
+            setTimeout(() => btn.classList.remove("flash-radial"), 600);
+
+            atualizarGradienteAno();
+
+            updatePlot();
+            Plotly.Plots.resize("plot");
+          });
+
+          filterContainer.appendChild(btn);
+        });
+
+        updatePlot();
+
+        // Adicionar evento de redimensionamento da janela
+        window.addEventListener("resize", () => {
+          updatePlot(); // Atualiza barmode, margens e dados
+          Plotly.Plots.resize("plot");
+        });
+        // Enviar dados iniciais
+        sendDemographicsData();
+      })();
+
+      // === CONTROLES DE SCROLL DOS FILTROS (MOBILE) ===
+      const scrollContainer = document.getElementById("age-filters");
+      const btnLeft = document.getElementById("scroll-left");
+      const btnRight = document.getElementById("scroll-right");
+
+      if (scrollContainer && btnLeft && btnRight) {
+        btnLeft.addEventListener("click", () => {
+          scrollContainer.scrollBy({ left: -100, behavior: "smooth" });
+        });
+
+        btnRight.addEventListener("click", () => {
+          scrollContainer.scrollBy({ left: 100, behavior: "smooth" });
+        });
+        // Mostra ou oculta as setas conforme a rolagem
+        function updateArrowVisibility() {
+          btnLeft.style.opacity = scrollContainer.scrollLeft > 10 ? "1" : "0.4";
+          const maxScroll =
+            scrollContainer.scrollWidth - scrollContainer.clientWidth - 10;
+          btnRight.style.opacity =
+            scrollContainer.scrollLeft < maxScroll ? "1" : "0.4";
+        }
+
+        scrollContainer.addEventListener("scroll", updateArrowVisibility);
+        window.addEventListener("resize", updateArrowVisibility);
+        updateArrowVisibility();
+      }
+
+      // === BOTÕES DE TROCA DE ANO (2010 / 2022) — versão animada ===
+      const btn2010 = document.getElementById("btn-2010");
+      const btn2022 = document.getElementById("btn-2022");
+
+      function toggleYear(selectedBtn, otherBtn, iframeSrc) {
+        if (selectedBtn.classList.contains("ativo")) return;
+
+        otherBtn.classList.remove("ativo");
+        selectedBtn.classList.add("ativo");
+
+        // efeito radial de clique
+        selectedBtn.classList.add("flash-radial");
+        setTimeout(() => selectedBtn.classList.remove("flash-radial"), 600);
+
+        // troca o iframe
+        window.parent.document.querySelector("#grafico-iframe").src = iframeSrc;
+      }
+
+      btn2010.addEventListener("click", () =>
+        toggleYear(
+          btn2010,
+          btn2022,
+          "/static/iframes/grafico_etaria_regiao_2010.html"
+        )
+      );
+
+      btn2022.addEventListener("click", () =>
+        toggleYear(
+          btn2022,
+          btn2010,
+          "/static/iframes/grafico_etaria_regiao_2022.html"
+        )
+      );
+    </script>
+  </body>
+</html>
