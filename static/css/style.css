@@ -70,7 +70,7 @@ main {
   color: #fff;
   padding: 30px 40px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* VOLTA para space-between */
   align-items: center;
   position: relative;
   overflow: hidden;
@@ -94,7 +94,10 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center; /* Centraliza o texto */
   gap: 10px;
+  text-align: center; /* Centraliza o texto */
+  flex: 1; /* ADICIONE: faz o texto ocupar o espaço do meio */
 }
 
 .header-pmsjc h1 {
@@ -102,13 +105,61 @@ main {
   font-weight: 900;
   margin: 0;
   color: #fff;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.55);
 }
 
 .header-pmsjc p {
   font-size: 1.1rem;
   opacity: 0.9;
   margin: 0;
+}
+
+/* Container dos botões */
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5em;
+  gap: 20px;
+}
+
+/* Grupo de botões à esquerda */
+.buttons-left {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+/* Ajuste no dropdown para remover margin extra */
+.dropdown {
+  margin: 0;
+}
+
+/* Ajuste no botão sobre */
+.btn-sobre {
+  margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .buttons-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .buttons-left {
+    flex-direction: column;
+  }
+  
+  .dropdown,
+  .btn-sobre {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .buttons-left {
+    gap: 10px;
+  }
 }
 
 /* SECTIONS */
@@ -118,24 +169,11 @@ main section {
   margin: 20px auto;
   border-radius: 15px;
   max-width: 900px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   transition: all 0.3s ease;
 }
 
 main section:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
-}
-
-/* TEXTOS */
-.text-pmsjc {
-  color: #004d9d;
-  font-weight: 800;
-  font-size: 1.4rem;
-  margin-bottom: 25px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  text-align: center;
 }
 
 /* PROGRESS BARS */
@@ -144,7 +182,6 @@ main section:hover {
   border-radius: 14px;
   margin-bottom: 16px;
   background: #ddd;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   cursor: pointer;
 }
@@ -156,7 +193,6 @@ main section:hover {
   justify-content: center;
   align-items: center;
   transition: width 0.6s ease, color 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   white-space: nowrap;
   border-radius: 14px;
   color: #fff;
@@ -178,10 +214,6 @@ main section:hover {
   }
 }
 
-.progress.highlight .progress-bar {
-  box-shadow: 0 0 10px 3px #000000;
-}
-
 .progress:hover {
   transform: scale(1.02);
   transition: transform 0.3s;
@@ -190,11 +222,13 @@ main section:hover {
 /* === CARDS RESPONSIVOS === */
 .stats-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 280px));
-  gap: 24px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
   justify-content: center;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
+  align-items: stretch;
+  padding: 0 20px;
+  margin: 10px auto 0;
+  max-width: 1400px;
 }
 
 .card-stat {
@@ -206,7 +240,6 @@ main section:hover {
   color: #222;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
   transition: all 0.4s ease;
   opacity: 0;
   transform: translateY(20px);
@@ -225,7 +258,6 @@ main section:hover {
 
 .card-stat:hover {
   transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
 }
 
 .card-stat h4 {
@@ -274,12 +306,10 @@ main section:hover {
   text-decoration: none;
   font-size: 1.2rem;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn-social:hover {
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 .btn-linkedin {
@@ -320,7 +350,6 @@ main section:hover {
   max-width: 88%;
   margin: 0 auto 2rem auto;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 77, 157, 0.2);
   background: linear-gradient(135deg, #e3f2fb 0%, #ffffff 100%);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease;
@@ -389,7 +418,6 @@ main section:hover {
   font-size: 0.85rem;
   font-weight: 600;
   pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   white-space: nowrap;
   z-index: 9999;
   transform: translateY(0);
@@ -415,12 +443,10 @@ main section:hover {
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdown button:hover {
   background: linear-gradient(90deg, #005bb5, #004d9d);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 }
 
 .dropdown button::after {
@@ -445,11 +471,12 @@ main section:hover {
   background: #ffffff;
   min-width: 220px;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   animation: fadeInDropdown 0.3s ease forwards;
+  z-index: 1000;
 }
 
+/* Mostra o dropdown ao passar o mouse OU quando tem a classe active */
 .dropdown:hover .content {
   display: block;
 }
@@ -538,7 +565,6 @@ main section:hover {
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -548,12 +574,10 @@ main section:hover {
 .btn-voltar-topo:hover {
   background: linear-gradient(90deg, #005bb5, #004d9d);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .btn-voltar-topo:active {
   transform: translateY(0);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 .btn-voltar-topo::before {
@@ -670,13 +694,7 @@ main section:hover {
     gap: 5px;
   }
 
-  .text-pmsjc {
-    font-size: 1.2rem;
-  }
-  main {
-    margin: 0;
-  }
-  main section {
+   main section {
     padding: 15px 10px;
     margin: 15px;
   }
@@ -705,14 +723,12 @@ main section:hover {
   font-weight: 600;
   border-radius: 8px;
   text-decoration: none;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.25s ease;
 }
 
 .btn-sobre:hover {
   background: linear-gradient(135deg, #0d4d7f, #0a60a8);
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
 }
 
 .btn-sobre i {
@@ -725,11 +741,329 @@ main section:hover {
 }
 
 .card-stat img {
+  display: block;
+  margin: 0 auto 10px auto;
+  width: 120px;
+  height: 120px
+  object-fit: cover;
+  object-position: center;
+}
+
+/* === AJUSTES ESPECÍFICOS PARA PÁGINA SOBRE NÓS === */
+/* IMPORTANTE: Adicione class="page-sobre-nos" na tag <body> do sobre.html */
+
+/* Aplica regras APENAS quando body tem a classe page-sobre-nos */
+body.page-sobre-nos {
+  overflow: hidden; /* Remove TODOS os scrolls */
+  height: 100vh;
+}
+
+body.page-sobre-nos .page-wrapper {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER - Mantém tamanho original */
+body.page-sobre-nos .header-pmsjc {
+  padding: 30px 40px; /* VOLTA AO ORIGINAL */
+}
+
+body.page-sobre-nos .header-pmsjc img {
+  width: 80px; /* VOLTA AO ORIGINAL */
+  height: auto;
+}
+
+body.page-sobre-nos .header-pmsjc h1 {
+  font-size: 2rem; /* VOLTA AO ORIGINAL */
+  margin: 0;
+}
+
+body.page-sobre-nos .header-pmsjc p {
+  font-size: 1.1rem; /* VOLTA AO ORIGINAL */
+  margin: 0;
+}
+
+/* Main com posicionamento especial */
+body.page-sobre-nos main {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  margin: -40px 40px 0;
+  position: relative;
+  z-index: 10;
+}
+
+/* FOOTER COMPACTO */
+body.page-sobre-nos .footer-pmsjc {
+  padding: 12px 0;
+  font-size: 0.9rem;
+  margin-top: 0;
+}
+
+/* Botão voltar - posicionamento absoluto */
+body.page-sobre-nos .voltar-container {
+  position: absolute;
+  top: -50px; /* POSICIONA NO HEADER */
+  right: 30px;
+  margin: 0;
+  z-index: 20;
+}
+
+body.page-sobre-nos .btn-sobre {
+  padding: 10px 18px;
+  font-size: 1rem;
+}
+
+/* Container da seção "Sobre o Projeto" - GRID COM 2 COLUNAS */
+body.page-sobre-nos main section {
+  background-color: #fff;
+  padding: 5px 20px;
+  margin: 20px 10px 10px 5px;
+  border-radius: 15px;
+  max-width: 1100px;
+  transition: all 0.3s ease;
+  
+  /* Grid com 2 colunas */
+  display: grid;
+  grid-template-columns: auto 1fr; /* Coluna 1 ajusta ao conteúdo, Coluna 2 ocupa o resto */
+  gap: 30px;
+  align-items: center;
+}
+
+body.page-sobre-nos main section:hover {
+  transform: none;
+}
+
+/* Título "Sobre o Projeto" - COLUNA 1 (ESQUERDA) */
+body.page-sobre-nos .text-pmsjc {
+  color: #004d9d;
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  text-align: left;
+  line-height: 1.2;
+  white-space: nowrap; /* Mantém em linha única ou quebra naturalmente */
+}
+
+/* === CARDS DOS INTEGRANTES - ALINHADOS E RESPONSIVOS === */
+body.page-sobre-nos .stats-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 colunas fixas */
+  gap: 18px;
+  justify-content: center;
+  align-items: start;
+  margin-top: -15px;
+  padding: 0 20px;
+  text-align: center;
+  max-width: 1400px;
+  flex: 1;
+}
+
+body.page-sobre-nos .card-stat {
+  background-color: #fff;
+  text-align: center;
+  color: #222;
+  padding: 15px;
+  border-radius: 12px;
+  transition: all 0.4s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+body.page-sobre-nos .card-stat:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+/* Imagens dos cards - padronizadas */
+body.page-sobre-nos .card-stat img {
   width: 100%;
-  height: 220px;           /* padrão fixo */
-  object-fit: cover;      /* preenche todo o espaço */
-  object-position: center 20%; /* preserva rosto */
+  height: 180px;
+  object-fit: cover;
+  object-position: center 20%;
   border-radius: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+}
+
+body.page-sobre-nos .card-stat h4 {
+  font-size: 1.1rem;
+  color: #004d9d;
+  margin: 8px 0 4px 0;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* === CARD SIMPLES E FUNCIONAL === */
+.card-stat {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center; /* CENTRALIZA TUDO */
+}
+
+/* Imagem */
+.card-stat img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* Nome */
+.card-stat h4 {
+  margin: 8px 0 4px;
+  font-size: 1.1rem;
+  color: #004d9d;
+}
+
+/* Cargo */
+.card-stat p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Botões sociais */
+body.page-sobre-nos .card-social-links {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+body.page-sobre-nos .btn-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+body.page-sobre-nos .btn-social:hover {
+  transform: translateY(-3px) scale(1.1);
+}
+
+body.page-sobre-nos .btn-linkedin {
+  background: linear-gradient(135deg, #0077b5, #005582);
+}
+
+body.page-sobre-nos .btn-linkedin:hover {
+  background: linear-gradient(135deg, #005582, #003d5c);
+}
+
+body.page-sobre-nos .btn-github {
+  background: linear-gradient(135deg, #333, #24292e);
+}
+
+body.page-sobre-nos .btn-github:hover {
+  background: linear-gradient(135deg, #24292e, #1a1d21);
+}
+
+body.page-sobre-nos .btn-portfolio {
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #2d9bd6, #036fa8);
+  color: #fff;
+}
+
+body.page-sobre-nos .btn-portfolio:hover {
+  background: linear-gradient(135deg, #036fa8, #025278);
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 1400px) {
+  body.page-sobre-nos .stats-cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1200px) {
+  body.page-sobre-nos .stats-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  body.page-sobre-nos .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.page-sobre-nos .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  body.page-sobre-nos .card-stat img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.page-sobre-nos .stats-cards {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+    margin: 20px auto;
+  }
+  
+  body.page-sobre-nos main section {
+    margin: 15px;
+    padding: 15px;
+  }
+}
+
+/* Remove qualquer resquício de container branco ou sombra */
+.page-sobre-nos section.stats-cards,
+.page-sobre-nos .stats-container {
+  background: transparent;   /* remove fundo */
+  box-shadow: none;          /* remove sombra */
+}
+
+/* Wrapper do bloco e botão */
+.sobre-projeto-wrapper {
+  display: flex;
+  align-items: flex-start;  /* Alinha topo do bloco e botão */
+  gap: 20px;                /* Espaçamento entre bloco e botão */
+  margin-left: 20px;        /* Mesma margem do primeiro card */
+  margin-bottom: 20px;
+}
+
+/* Mantém o bloco branco */
+.sobre-projeto-wrapper section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  max-width: 700px; /* Ajuste conforme o conteúdo */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Botão voltar fora do fundo branco */
+.btn-voltar {
+  position: relative;
+  top: 40px; /* move 5px para baixo */
 }
 

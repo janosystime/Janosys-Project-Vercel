@@ -33,36 +33,44 @@
     <div class="graphic-container">
 
       <!-- MENU -->
-      <div class="dropdown">
-        <button><i class="fas fa-chart-pie"></i> Gráficos</button>
+      <div class="buttons-container">
+        <div class="buttons-left">
+          <div class="dropdown">
+            <button><i class="fas fa-chart-pie"></i> Gráficos</button>
 
-        <div class="content">
-          <a onclick="setIframe('grafico_regioes.html')">Densidade Populacional</a>
+            <div class="content">
+              <a onclick="setIframe('grafico_regioes.html')">Densidade Populacional</a>
 
-          <a>Faixa Etária e Região ▸</a>
-          <div style="margin-left:12px;">
-            <a onclick="setIframe('fixed_data/grafico_etaria_regiao_2010.html')">• 2010</a>
-            <a onclick="setIframe('fixed_data/grafico_etaria_regiao.html')">• 2020</a>
+              <a>Faixa Etária e Região ▸</a>
+              <div style="margin-left:12px;">
+                <a onclick="setIframe('fixed_data/grafico_etaria_regiao_2010.html')">• 2010</a>
+                <a onclick="setIframe('fixed_data/grafico_etaria_regiao.html')">• 2020</a>
+              </div>
+
+              <a onclick="setIframe('fixed_data/grafico_criancas_creches.html')">Crianças e Creches</a>
+              <a onclick="setIframe('grafico_idoso_ubs.html')">Idosos e UBS</a>
+              <a onclick="setIframe('grafico_renda.html')">Renda Média</a>
+            </div>
           </div>
 
-          <a onclick="setIframe('fixed_data/grafico_criancas_creches.html')">Crianças e Creches</a>
-          <a onclick="setIframe('grafico_idoso_ubs.html')">Idosos e UBS</a>
-          <a onclick="setIframe('grafico_renda.html')">Renda Média</a>
+          <div class="dropdown">
+            <button><i class="fas fa-map-marked-alt"></i> Perfil das Regiões</button>
 
-          <a onclick="setIframe('perfil_zona_norte.html')">Perfil — Zona Norte</a>
-          <a onclick="setIframe('perfil_zona_sul.html')">Perfil — Zona Sul</a>
-          <a onclick="setIframe('perfil_zona_leste.html')">Perfil — Zona Leste</a>
-          <a onclick="setIframe('perfil_zona_oeste.html')">Perfil — Zona Oeste</a>
-          <a onclick="setIframe('perfil_zona_sudeste.html')">Perfil — Zona Sudeste</a>
-          <a onclick="setIframe('perfil_zona_centro.html')">Perfil — Zona Centro</a>
+            <div class="content">
+              <a onclick="setIframe('perfil_zona_norte.html')">Zona Norte</a>
+              <a onclick="setIframe('perfil_zona_sul.html')">Zona Sul</a>
+              <a onclick="setIframe('perfil_zona_leste.html')">Zona Leste</a>
+              <a onclick="setIframe('perfil_zona_oeste.html')">Zona Oeste</a>
+              <a onclick="setIframe('perfil_zona_sudeste.html')">Zona Sudeste</a>
+              <a onclick="setIframe('perfil_zona_centro.html')">Zona Centro</a>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <p>
         <a href="sobre.html" class="btn-sobre">
           <i class="fas fa-users"></i> Sobre Nós
         </a>
-      </p>
+      </div>
 
       <iframe
         id="grafico-iframe"
@@ -91,7 +99,23 @@
 <script>
   function setIframe(file) {
     document.getElementById("grafico-iframe").src = "static/iframes/" + file;
+    
+    // Força o fechamento dos dropdowns ao clicar em qualquer link
+    document.querySelectorAll('.dropdown .content').forEach(content => {
+      content.style.display = 'none';
+    });
   }
+
+  // Reabre o dropdown no hover após ser fechado
+  document.querySelectorAll('.dropdown').forEach(dropdown => {
+    dropdown.addEventListener('mouseenter', function() {
+      this.querySelector('.content').style.display = 'block';
+    });
+    
+    dropdown.addEventListener('mouseleave', function() {
+      this.querySelector('.content').style.display = 'none';
+    });
+  });
 </script>
 
 </body>
