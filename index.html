@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Prefeitura de São José dos Campos — Relatório Demográfico</title>
+
+  <meta name="description" content="Relatório Demográfico da Prefeitura de São José dos Campos" />
+  <meta name="theme-color" content="#0c3c60" />
+
+  <link rel="icon" href="static/images/brasao.png" />
+  <link rel="stylesheet" href="static/css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
+</head>
+
+<body id="topo">
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <header class="header-pmsjc">
+    <img src="static/images/brasao.png" width="80" />
+    <div class="header-text">
+      <h1><i class="fas fa-city pulse"></i> Prefeitura de São José dos Campos</h1>
+      <p><i class="fas fa-handshake float"></i> Compromisso com a cidade</p>
+    </div>
+    <img src="static/images/bandeira.jpg" width="80" id="bandeira" />
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <div class="graphic-container">
+
+      <!-- MENU -->
+      <div class="dropdown">
+        <button><i class="fas fa-chart-pie"></i> Gráficos</button>
+
+        <div class="content">
+          <a onclick="setIframe('grafico_regioes.html')">Densidade Populacional</a>
+
+          <a>Faixa Etária e Região ▸</a>
+          <div style="margin-left:12px;">
+            <a onclick="setIframe('fixed_data/grafico_etaria_regiao_2010.html')">• 2010</a>
+            <a onclick="setIframe('fixed_data/grafico_etaria_regiao.html')">• 2020</a>
+          </div>
+
+          <a onclick="setIframe('fixed_data/grafico_criancas_creches.html')">Crianças e Creches</a>
+          <a onclick="setIframe('grafico_idoso_ubs.html')">Idosos e UBS</a>
+          <a onclick="setIframe('grafico_renda.html')">Renda Média</a>
+
+          <a onclick="setIframe('perfil_zona_norte.html')">Perfil — Zona Norte</a>
+          <a onclick="setIframe('perfil_zona_sul.html')">Perfil — Zona Sul</a>
+          <a onclick="setIframe('perfil_zona_leste.html')">Perfil — Zona Leste</a>
+          <a onclick="setIframe('perfil_zona_oeste.html')">Perfil — Zona Oeste</a>
+          <a onclick="setIframe('perfil_zona_sudeste.html')">Perfil — Zona Sudeste</a>
+          <a onclick="setIframe('perfil_zona_centro.html')">Perfil — Zona Centro</a>
+        </div>
+      </div>
+
+      <p>
+        <a href="sobre.html" class="btn-sobre">
+          <i class="fas fa-users"></i> Sobre Nós
+        </a>
+      </p>
+
+      <iframe
+        id="grafico-iframe"
+        src="static/iframes/grafico_regioes.html"
+        width="100%"
+        height="680"
+        loading="lazy">
+      </iframe>
+
+    </div>
+  </main>
+
+  <!-- BOTÃO TOPO -->
+  <button class="btn-voltar-topo" onclick="window.scrollTo({top:0,behavior:'smooth'})"></button>
+
+  <!-- FOOTER -->
+  <footer class="footer-pmsjc">
+    <i class="fas fa-code"></i>
+    <a class="footer-link" href="https://github.com/janosystime" target="_blank">
+      JanoSys Technologies
+    </a>
+  </footer>
+
+</div>
+
+<script>
+  function setIframe(file) {
+    document.getElementById("grafico-iframe").src = "static/iframes/" + file;
+  }
+</script>
+
+</body>
+</html>
